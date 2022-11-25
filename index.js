@@ -13,6 +13,7 @@ import {
 } from '@github/dependency-submission-toolkit'
 
 async function run() {
+  core.debug(`Running @jonathborg/spdx-to-dependency-graph-action`);
   let manifests = getManifestsFromSpdxFiles(searchFiles());
 
   let snapshot = new Snapshot({

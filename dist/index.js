@@ -24071,6 +24071,7 @@ const glob = __nccwpck_require__(1957);
 
 
 async function run() {
+  core.debug(`Running @jonathborg/spdx-to-dependency-graph-action`);
   let manifests = getManifestsFromSpdxFiles(searchFiles());
 
   let snapshot = new _github_dependency_submission_toolkit__WEBPACK_IMPORTED_MODULE_0__.Snapshot({
