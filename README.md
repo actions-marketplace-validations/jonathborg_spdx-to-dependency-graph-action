@@ -34,7 +34,7 @@ jobs:
         name: sbom
         path: _manifest/spdx_2.2
     - name: SBOM upload 
-      uses: jhutchings1/spdx-to-dependency-graph-action@v0.0.1
+      uses: jonathborg/spdx-to-dependency-graph-action@v1.0.0
       with:
         filePath: "_manifest/spdx_2.2/"
 ```        
