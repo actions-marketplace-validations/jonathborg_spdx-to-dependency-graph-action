@@ -14,17 +14,17 @@ import {
 
 async function run() {
   let manifests = getManifestsFromSpdxFiles(searchFiles());
-  
+
   let snapshot = new Snapshot({
-      name: "spdx-to-dependency-graph-action",
-      version: "0.0.1",
-      url: "https://github.com/jhutchings1/spdx-to-dependency-graph-action",
-  }, 
-  github.context,
-  {
-    correlator:`${github.context.job}`,
-    id: github.context.runId.toString()
-  });
+    name: "spdx-to-dependency-graph-action",
+    version: "0.0.1",
+    url: "https://github.com/jhutchings1/spdx-to-dependency-graph-action",
+  },
+    github.context,
+    {
+      correlator: `${github.context.job}`,
+      id: github.context.runId.toString()
+    });
 
   manifests?.forEach(manifest => {
     snapshot.addManifest(manifest);
@@ -53,11 +53,11 @@ function getManifestFromSpdxFile(document, fileName) {
       purl = referenceLocator;
     } else {
       purl = genericPurl;
-    }  
+    }
 
     // Working around weird encoding issues from an SBOM generator
     // Find the last instance of %40 and replace it with @
-    purl = replaceVersionEscape(purl);  
+    purl = fixPurlEncoding(purl);
 
     let relationships = document.relationships?.find(rel => rel.relatedSpdxElement == pkg.SPDXID && rel.relationshipType == "DEPENDS_ON" && rel.spdxElementId != "SPDXRef-RootPackage");
     if (relationships != null && relationships.length > 0) {
@@ -87,7 +87,12 @@ function searchFiles() {
 }
 
 // Fixes issues with an escaped version string
-function replaceVersionEscape(purl) {
+function fixPurlEncoding(purl) {
+  // If the NPM organization name starts with @, replace with %40
+  if (purl && purl.startsWith('pkg:npm/@')) {
+    purl = purl.replace('@', '%40');
+  }
+
   //If there's an "@" in the purl, then we don't need to do anything.
   if (purl != null && purl != undefined && !purl?.includes("@")) {
     let index = purl.lastIndexOf("%40");
